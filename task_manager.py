@@ -39,6 +39,7 @@ def view_task():
             print(f"{index + 1}.", "[X]", task["Task"], '-', task["Priority"])
 
 def complete_task():
+
     # Checks to see if task list is empty
     if not tasks:
         print("No task availible at this time.")
@@ -49,11 +50,34 @@ def complete_task():
     try:
         task_number = int(input("What task did you commplete? "))
         tasks[task_number - 1]["Completed"] = True
+        print(f"Task number {task_number} has been marked completed.")
+
     except ValueError:
+        print("Please enter a valid task number.")
+        
+    except IndexError:
+        print("Task number doesn't exist.")
+
+def delete_task():
+
+    # Checks to see if task list is empty
+    if not tasks:
+        print("No task availible at this time.")
+        return
+    
+    view_task()
+
+    try:
+        task_delete = int(input("What task number would you like to delete? \n"))
+
+        removed_task = tasks.pop(task_delete - 1)
+        print(f"'{removed_task['Task']}' removed successfully.\n")
+
+    except ValueError:
+        print("Please enter a valid task number.")
 
     except IndexError:
-        
-    print(f"Task number {task_number} has been marked completed.")
+        print(f"Task number {task_delete} could not be found.\n")
 
 
 while True:
@@ -62,7 +86,8 @@ while True:
     print("1. Add Task")
     print("2. View Task")
     print("3. Complete Task")
-    print("4. Exit")
+    print("4. Delete Task")
+    print("5. Exit")
 
     # Get user menu options
     choice = input("Choose an option: ")
@@ -79,6 +104,9 @@ while True:
         complete_task()
 
     elif choice == "4":
+        delete_task()
+
+    elif choice == "5":
         break
 
     else:
