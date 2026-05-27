@@ -21,6 +21,8 @@ def add_task():
     # Adds task dictionary to task list
     tasks.append(new_task)
 
+    save_tasks()
+
     print("Task added successfully!\n")
 
 # Allows the user to view current task and whether the task is complete or incomplete
@@ -35,8 +37,31 @@ def view_task():
     for index, task in enumerate(tasks):
         if not task["Completed"]:
             print(f"{index + 1}.", "[ ]", task["Task"], '- ', task["Priority"])
-        if task["Completed"]:
+        else:
             print(f"{index + 1}.", "[X]", task["Task"], '-', task["Priority"])
+
+def edit_task():
+
+    if not tasks:
+        print("No task availible at this time.")
+        return
+    
+    view_task()
+
+    try:
+        choose_task = int(input("Choose a task you would like to edit."))
+        tasks[choose_task - 1]["Task"] = input("What is the new name of your task? ")
+        tasks[choose_task - 1]["Priority"] = input("What is the new priority level of your task? ")
+        tasks[choose_task - 1]["Completed"] = False
+
+
+        save_tasks()
+    
+    except ValueError:
+        print("Please enter a valid task number.")
+    except IndexError:
+        print("Task number does not exist")
+
 
 def complete_task():
 
@@ -50,6 +75,7 @@ def complete_task():
     try:
         task_number = int(input("What task did you commplete? "))
         tasks[task_number - 1]["Completed"] = True
+        save_tasks()
         print(f"Task number {task_number} has been marked completed.")
 
     except ValueError:
@@ -58,6 +84,7 @@ def complete_task():
     except IndexError:
         print("Task number doesn't exist.")
 
+# Allows user to view and select a task to delete
 def delete_task():
 
     # Checks to see if task list is empty
@@ -71,6 +98,7 @@ def delete_task():
         task_delete = int(input("What task number would you like to delete? \n"))
 
         removed_task = tasks.pop(task_delete - 1)
+        save_tasks()
         print(f"'{removed_task['Task']}' removed successfully.\n")
 
     except ValueError:
@@ -79,6 +107,43 @@ def delete_task():
     except IndexError:
         print(f"Task number {task_delete} could not be found.\n")
 
+def save_tasks():
+    file = open("Task_Manager.txt", "w")
+
+    for task in tasks:
+        file.write(f"{task['Task']}, {task['Priority']}, {task['Completed']}\n")
+
+    file.close()
+
+def load_tasks():
+
+    try:
+        file = open("Task_Manager.txt", "r")
+    except FileNotFoundError:
+        return
+    
+    for line in file:
+        parts = line.split(",")
+
+        task_name = parts[0].strip()
+        priority = parts[1].strip()
+        completed_status = parts[2].strip()
+
+        if completed_status == "True":
+            completed_status = True
+        else:
+            completed_status = False
+        
+        task = {
+            "Task": task_name,
+            "Priority": priority,
+            "Completed":completed_status}
+        
+        tasks.append(task)
+    file.close()
+
+tasks.clear()
+load_tasks()
 
 while True:
     print()
@@ -87,7 +152,8 @@ while True:
     print("2. View Task")
     print("3. Complete Task")
     print("4. Delete Task")
-    print("5. Exit")
+    print("5. Edit Task")
+    print("6. Exit")
 
     # Get user menu options
     choice = input("Choose an option: ")
@@ -107,6 +173,9 @@ while True:
         delete_task()
 
     elif choice == "5":
+        edit_task()
+
+    elif choice == "6":
         break
 
     else:
