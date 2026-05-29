@@ -40,25 +40,41 @@ def view_task():
         else:
             print(f"{index + 1}.", "[X]", task["Task"], '-', task["Priority"])
 
+# Allows user to edit existing tasks 
 def edit_task():
 
+    # Checks to see if task list is empty
     if not tasks:
         print("No task availible at this time.")
         return
     
+    # Displays current tasks to the user
     view_task()
 
     try:
-        choose_task = int(input("Choose a task you would like to edit."))
-        tasks[choose_task - 1]["Task"] = input("What is the new name of your task? ")
-        tasks[choose_task - 1]["Priority"] = input("What is the new priority level of your task? ")
-        tasks[choose_task - 1]["Completed"] = False
+        # Gets the task number the user wants to edit
+        choose_task = int(input("Choose a task you would like to edit. "))
 
+        # Stores the selected task dictionary
+        selected_task = tasks[choose_task - 1]
 
+        # Updates the task name
+        selected_task["Task"] = input("What is the new name of your task? ")
+
+        # Updates the task priority
+        selected_task["Priority"] = input("What is the new priority level of your task? ")
+
+        # Saves updated task data to file
         save_tasks()
+
+        # Confirms successful update
+        print("Task updated successfully")
     
+    # Handles invalid number input
     except ValueError:
         print("Please enter a valid task number.")
+
+    # Handles task number that do not exist
     except IndexError:
         print("Task number does not exist")
 
